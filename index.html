@@ -6,264 +6,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Coding Trends</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #0d1117; color: #e6edf3;
-    font-family: 'Segoe UI', 'Noto Sans JP', sans-serif;
-    min-height: 100vh; padding-bottom: 60px;
-  }
-  header {
-    background: linear-gradient(180deg,#161b22,#0d1117);
-    border-bottom: 1px solid #21262d;
-    padding: 24px 20px 20px;
-  }
-  header h1 {
-    font-size: 20px; font-weight: 800; letter-spacing: -0.02em;
-    background: linear-gradient(90deg,#79c0ff,#56d364);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 4px;
-  }
-  header p { color: #8b949e; font-size: 13px; margin-bottom: 16px; }
-  .api-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-  .api-row input {
-    flex: 1; min-width: 200px; background: #161b22; color: #e6edf3;
-    border: 1px solid #30363d; border-radius: 8px; padding: 9px 14px;
-    font-size: 13px; outline: none;
-  }
-  .api-row input:focus { border-color: #388bfd; }
-  .btn-primary {
-    background: linear-gradient(135deg,#1f6feb,#388bfd);
-    color: #fff; border: none; border-radius: 8px;
-    padding: 10px 22px; font-weight: 700; font-size: 14px;
-    cursor: pointer; letter-spacing: 0.03em; white-space: nowrap;
-  }
-  .btn-primary:disabled { background: #21262d; cursor: not-allowed; }
-  .btn-sub {
-    background: transparent; color: #8b949e;
-    border: 1px solid #30363d; border-radius: 6px;
-    padding: 8px 18px; cursor: pointer; font-size: 13px; margin-top: 16px;
-  }
-  main { max-width: 680px; margin: 0 auto; padding: 24px 16px 0; }
-  .empty { text-align: center; padding: 60px 20px; color: #8b949e; }
-  .empty .icon { font-size: 48px; margin-bottom: 16px; }
-  .empty p { font-size: 15px; margin-bottom: 6px; }
-  .empty small { font-size: 13px; }
-  .loading { text-align: center; padding: 60px 20px; }
-  .spinner {
-    width: 40px; height: 40px; border: 3px solid #21262d;
-    border-top-color: #388bfd; border-radius: 50%;
-    margin: 0 auto 16px; animation: spin 1s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading p { color: #8b949e; font-size: 14px; }
-  .error {
-    background: #f8514922; border: 1px solid #f8514944;
-    border-radius: 8px; padding: 14px; color: #f85149; font-size: 14px;
-  }
-  .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .meta span { color: #8b949e; font-size: 12px; }
-  .badge {
-    background: #56d36422; color: #56d364;
-    border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 700;
-  }
-  .card {
-    background: #161b22; border: 1px solid #30363d;
-    border-radius: 12px; padding: 20px; margin-bottom: 16px;
-    position: relative; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .card-bar {
-    position: absolute; top: 0; left: 0; width: 3px; bottom: 0; border-radius: 12px 0 0 12px;
-  }
-  .card-inner { padding-left: 8px; }
-  .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-  .tag {
-    border-radius: 20px; padding: 2px 10px;
-    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
-  }
-  .card h3 { font-size: 16px; font-weight: 700; color: #e6edf3; line-height: 1.4; }
-  .card-num { color: #8b949e; font-size: 20px; min-width: 24px; text-align: center; }
-  .card p { color: #8b949e; font-size: 14px; margin: 10px 0 14px; line-height: 1.7; }
-  .btn-toggle {
-    border-radius: 6px; padding: 6px 14px;
-    cursor: pointer; font-size: 13px; font-weight: 600;
-    transition: all 0.2s; border: 1px solid;
-  }
-  .playground { margin-top: 16px; }
-  .playground textarea {
-    width: 100%; min-height: 120px; background: #0d1117; color: #c9d1d9;
-    border: 1px solid #30363d; border-radius: 8px; padding: 12px;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px;
-    resize: vertical; outline: none;
-  }
-  .playground textarea:focus { border-color: #388bfd; }
-  .run-row { display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
-  .btn-run {
-    background: linear-gradient(135deg,#238636,#2ea043);
-    color: #fff; border: none; border-radius: 6px;
-    padding: 7px 20px; font-weight: 700; cursor: pointer; font-size: 13px;
-  }
-  .btn-run:disabled { background: #21262d; cursor: not-allowed; }
-  .btn-reset {
-    background: transparent; color: #8b949e;
-    border: 1px solid #30363d; border-radius: 6px;
-    padding: 7px 14px; cursor: pointer; font-size: 12px;
-  }
-  .run-hint { font-size: 11px; color: #8b949e; }
-  .output {
-    margin-top: 10px; background: #010409;
-    border: 1px solid #21262d; border-radius: 8px;
-    padding: 12px; font-family: monospace; font-size: 13px;
-  }
-  .output-label { color: #8b949e; font-size: 11px; margin-bottom: 6px; letter-spacing: 0.1em; }
-  .out-log { color: #58a6ff; margin-bottom: 2px; }
-  .out-err { color: #f85149; margin-bottom: 2px; }
-  .reload-wrap { text-align: center; margin-top: 24px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0d1117; color: #e6edf3; font-family: sans-serif; padding: 20px; }
+h1 { font-size: 20px; margin-bottom: 8px; color: #79c0ff; }
+p { color: #8b949e; font-size: 13px; margin-bottom: 16px; }
+input {
+  width: 100%; padding: 10px; background: #161b22; color: #e6edf3;
+  border: 1px solid #30363d; border-radius: 8px; font-size: 14px;
+  margin-bottom: 10px; display: block;
+}
+button {
+  background: #1f6feb; color: #fff; border: none; border-radius: 8px;
+  padding: 12px 24px; font-size: 15px; font-weight: bold; cursor: pointer;
+  width: 100%; margin-bottom: 16px;
+}
+#status { color: #f0e68c; font-size: 14px; margin-bottom: 12px; min-height: 20px; }
+.card {
+  background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+  padding: 16px; margin-bottom: 14px;
+}
+.card h3 { font-size: 15px; margin-bottom: 8px; color: #e6edf3; }
+.card p { font-size: 13px; color: #8b949e; margin-bottom: 10px; }
+.card button { background: #238636; width: auto; padding: 8px 16px; font-size: 13px; margin-bottom: 8px; }
+textarea {
+  width: 100%; background: #0d1117; color: #c9d1d9;
+  border: 1px solid #30363d; border-radius: 6px;
+  padding: 10px; font-family: monospace; font-size: 12px;
+  min-height: 100px; resize: vertical; display: block; margin-bottom: 8px;
+}
+.run-btn { background: #2ea043 !important; }
+.reset-btn { background: #30363d !important; }
+.output {
+  background: #010409; border: 1px solid #21262d; border-radius: 6px;
+  padding: 10px; font-family: monospace; font-size: 12px; margin-top: 8px;
+}
+.log { color: #58a6ff; }
+.err { color: #f85149; }
 </style>
 </head>
 <body>
-<header>
-  <h1>⚡ AI Coding Trends</h1>
-  <p>AIが最新トレンドをWeb検索して取得 → コードをその場で実行して体験</p>
-  <div class="api-row">
-    <input type="password" id="apiKey" placeholder="Gemini APIキーを入力（AIza...）" />
-    <button class="btn-primary" id="fetchBtn" id="fetchBtn">🔍 取得</button>
-  </div>
-</header>
 
-<main id="main">
-  <div class="empty">
-    <div class="icon">🤖</div>
-    <p>APIキーを入力してトレンドを取得しましょう</p>
-    <small>Gemini APIキーは aistudio.google.com で無料取得できます</small>
-  </div>
-</main>
+<h1>⚡ AI Coding Trends</h1>
+<p>Gemini APIキーを入力してトレンドを取得しましょう</p>
+
+<input type="password" id="apiKey" placeholder="AIza... （Gemini APIキー）">
+<button onclick="go()">🔍 最新トレンドを取得</button>
+<div id="status"></div>
+<div id="results"></div>
 
 <script>
-const COLORS = ["#f78166","#79c0ff","#56d364","#e3b341"];
-let trendsData = [];
+var codes = {};
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('fetchBtn').addEventListener('click', fetchTrends);
-});
-
-async function fetchTrends() {
-  const key = document.getElementById('apiKey').value.trim();
+function go() {
+  var key = document.getElementById('apiKey').value.trim();
   if (!key) { alert('APIキーを入力してください'); return; }
 
-  const btn = document.getElementById('fetchBtn');
-  btn.disabled = true; btn.textContent = '検索中…';
-  setMain(`<div class="loading"><div class="spinner"></div><p>AIが最新トレンドをWeb検索中…</p></div>`);
+  document.getElementById('status').textContent = '🔍 AIが検索中...';
+  document.getElementById('results').innerHTML = '';
 
-  const prompt = `あなたはAIコーディングのトレンド専門家です。2026年5月時点の最新AIコーディングトレンドを3件調査し、以下のJSON形式のみで返してください。前置き・説明・バッククォートは一切不要です。
+  var prompt = 'AIコーディングの最新トレンドを3件、以下のJSON形式のみで返してください。バッククォートや説明文は不要です。\n{"trends":[{"id":"1","title":"タイトル","summary":"要約（日本語2文）","tags":["タグ1","タグ2"],"sampleCode":"console.log(\'hello\');"}],"fetchedAt":"2026年5月16日"}';
 
-{"trends":[{"id":"1","title":"トレンドタイトル（日本語）","summary":"2〜3文の要約（日本語）","tags":["タグ1","タグ2"],"sampleCode":"// ブラウザで動くJavaScriptサンプルコード\nconsole.log('hello');"}],"fetchedAt":"2026年5月16日"}
-
-sampleCodeはconsole.logで結果を出力するブラウザ対応JavaScriptにしてください。外部ライブラリは不可。`;
-
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      }
-    );
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || 'APIエラー');
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    text = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(text);
-    trendsData = parsed.trends;
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.error) throw new Error(data.error.message);
+    var text = data.candidates[0].content.parts[0].text;
+    text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+    var parsed = JSON.parse(text);
+    codes = {};
+    parsed.trends.forEach(function(t) { codes[t.id] = t.sampleCode; });
     renderTrends(parsed);
-  } catch(e) {
-    setMain(`<div class="error">エラー: ${e.message}<br>APIキーを確認してもう一度お試しください。</div>`);
-  }
-
-  btn.disabled = false; btn.textContent = '🔍 取得';
+  })
+  .catch(function(e) {
+    document.getElementById('status').textContent = '❌ エラー: ' + e.message;
+  });
 }
 
 function renderTrends(parsed) {
-  let html = `<div class="meta"><span>取得: ${parsed.fetchedAt}</span><span class="badge">✓ ${parsed.trends.length}件</span></div>`;
-  parsed.trends.forEach((t, i) => {
-    const c = COLORS[i % COLORS.length];
-    html += `
-    <div class="card" id="card-${t.id}" style="box-shadow:0 2px 8px #0004">
-      <div class="card-bar" style="background:${c}"></div>
-      <div class="card-inner">
-        <div class="card-header">
-          <div>
-            <div class="tags">${t.tags.map(tag=>`<span class="tag" style="background:${c}22;color:${c}">${tag}</span>`).join('')}</div>
-            <h3>${t.title}</h3>
-          </div>
-          <span class="card-num">0${i+1}</span>
-        </div>
-        <p>${t.summary}</p>
-        <button class="btn-toggle" id="toggle-${t.id}"
-          style="background:${c}22;color:${c};border-color:${c}55"
-          onclick="togglePlayground('${t.id}','${c}')">▼ コードを試す</button>
-        <div class="playground" id="play-${t.id}" style="display:none"></div>
-      </div>
-    </div>`;
-  });
-  html += `<div class="reload-wrap"><button class="btn-sub" onclick="fetchTrends()">🔄 再取得</button></div>`;
-  setMain(html);
-}
-
-function togglePlayground(id, color) {
-  const play = document.getElementById(`play-${id}`);
-  const btn = document.getElementById(`toggle-${id}`);
-  const trend = trendsData.find(t => t.id === id);
-  if (play.style.display === 'none') {
-    play.style.display = 'block';
-    play.innerHTML = buildPlayground(id, trend.sampleCode, color);
-    btn.textContent = '▲ コードを閉じる';
-  } else {
-    play.style.display = 'none';
-    btn.textContent = '▼ コードを試す';
-  }
-}
-
-function buildPlayground(id, code, color) {
-  const escaped = code.replace(/`/g,'&#96;').replace(/\$/g,'&#36;');
-  return `
-    <textarea id="src-${id}">${code}</textarea>
+  document.getElementById('status').textContent = '✅ ' + parsed.fetchedAt + ' 取得完了';
+  var html = '';
+  parsed.trends.forEach(function(t) {
+    html += '<div class="card">';
+    html += '<h3>' + t.title + '</h3>';
+    html += '<p>' + t.summary + '</p>';
+    html += '<button onclick="toggleCode(\'' + t.id + '\')">▼ コードを試す</button>';
+    html += '<div id="play-' + t.id + '" style="display:none">';
+    html += '<textarea id="src-' + t.id + '"></textarea>';
 
 ```
-<div class="run-row">
-  <button class="btn-run" onclick="runCode('${id}')">▶ 実行</button>
-  <button class="btn-reset" onclick="resetCode('${id}','${escaped}')">リセット</button>
-  <span class="run-hint" id="hint-${id}"></span>
-</div>
-<div class="output" id="out-${id}" style="display:none"></div>`;
+html += '<button class="run-btn" onclick="runCode(\'' + t.id + '\')">▶ 実行</button> ';
+html += '<button class="reset-btn" onclick="resetCode(\'' + t.id + '\')">リセット</button>';
+html += '<div id="out-' + t.id + '" class="output" style="display:none"></div>';
+html += '</div></div>';
 ```
 
+});
+document.getElementById(‘results’).innerHTML = html;
+parsed.trends.forEach(function(t) {
+document.getElementById(‘src-’ + t.id).value = t.sampleCode;
+});
+}
+
+function toggleCode(id) {
+var el = document.getElementById(‘play-’ + id);
+el.style.display = el.style.display === ‘none’ ? ‘block’ : ‘none’;
 }
 
 function runCode(id) {
-const src = document.getElementById(`src-${id}`).value;
-const logs = [];
-const origLog = console.log, origErr = console.error;
-console.log = (…a) => logs.push({t:‘log’, m: a.map(String).join(’ ‘)});
-console.error = (…a) => logs.push({t:‘err’, m: a.map(String).join(’ ’)});
+var src = document.getElementById(‘src-’ + id).value;
+var logs = [];
+var orig = console.log;
+var origerr = console.error;
+console.log = function() { logs.push({t:‘log’, m: Array.from(arguments).join(’ ‘)}); };
+console.error = function() { logs.push({t:‘err’, m: Array.from(arguments).join(’ ’)}); };
 try { new Function(src)(); } catch(e) { logs.push({t:‘err’, m: e.message}); }
-console.log = origLog; console.error = origErr;
-
-const out = document.getElementById(`out-${id}`);
-const hint = document.getElementById(`hint-${id}`);
+console.log = orig;
+console.error = origerr;
+var out = document.getElementById(‘out-’ + id);
 out.style.display = ‘block’;
-out.innerHTML = `<div class="output-label">OUTPUT</div>` +
-logs.map(l=>`<div class="${l.t==='err'?'out-err':'out-log'}">${l.t==='err'?'✕':'→'} ${l.m}</div>`).join(’’);
-hint.textContent = `✓ ${logs.length}件の出力`;
+out.innerHTML = logs.map(function(l) {
+return ‘<div class="' + (l.t==='err'?'err':'log') + '">’ + (l.t===‘err’?’✕ ’:‘→ ‘) + l.m + ‘</div>’;
+}).join(’’);
+if (!logs.length) out.innerHTML = ‘<div class="log">→ 出力なし（エラーなし）</div>’;
 }
 
-function resetCode(id, escaped) {
-document.getElementById(`src-${id}`).value =
-escaped.replace(/`/g,’`').replace(/&#36;/g,'$'); document.getElementById(`out-${id}`).style.display = 'none'; document.getElementById(`hint-${id}`).textContent = ‘’;
+function resetCode(id) {
+document.getElementById(‘src-’ + id).value = codes[id];
+document.getElementById(‘out-’ + id).style.display = ‘none’;
 }
-
-function setMain(html) { document.getElementById(‘main’).innerHTML = html; }
 </script>
 
 </body>
