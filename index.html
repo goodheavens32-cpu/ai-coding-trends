@@ -4,139 +4,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Coding Trends</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d1117; color: #e6edf3; font-family: sans-serif; padding: 20px; }
-h1 { font-size: 20px; margin-bottom: 8px; color: #79c0ff; }
-p { color: #8b949e; font-size: 13px; margin-bottom: 16px; }
-input {
-  width: 100%; padding: 10px; background: #161b22; color: #e6edf3;
-  border: 1px solid #30363d; border-radius: 8px; font-size: 14px;
-  margin-bottom: 10px; display: block;
-}
-button {
-  background: #1f6feb; color: #fff; border: none; border-radius: 8px;
-  padding: 12px 24px; font-size: 15px; font-weight: bold; cursor: pointer;
-  width: 100%; margin-bottom: 16px;
-}
-#status { color: #f0e68c; font-size: 14px; margin-bottom: 12px; min-height: 20px; }
-.card {
-  background: #161b22; border: 1px solid #30363d; border-radius: 10px;
-  padding: 16px; margin-bottom: 14px;
-}
-.card h3 { font-size: 15px; margin-bottom: 8px; color: #e6edf3; }
-.card p { font-size: 13px; color: #8b949e; margin-bottom: 10px; }
-.card button { background: #238636; width: auto; padding: 8px 16px; font-size: 13px; margin-bottom: 8px; }
-textarea {
-  width: 100%; background: #0d1117; color: #c9d1d9;
-  border: 1px solid #30363d; border-radius: 6px;
-  padding: 10px; font-family: monospace; font-size: 12px;
-  min-height: 100px; resize: vertical; display: block; margin-bottom: 8px;
-}
-.run-btn { background: #2ea043 !important; }
-.reset-btn { background: #30363d !important; }
-.output {
-  background: #010409; border: 1px solid #21262d; border-radius: 6px;
-  padding: 10px; font-family: monospace; font-size: 12px; margin-top: 8px;
-}
-.log { color: #58a6ff; }
-.err { color: #f85149; }
-</style>
+<title>Test</title>
 </head>
-<body>
+<body style="background:#111;color:#fff;font-family:sans-serif;padding:20px">
 
-<h1>⚡ AI Coding Trends</h1>
-<p>Gemini APIキーを入力してトレンドを取得しましょう</p>
+<h2>ボタンテスト</h2>
+<p id="msg" style="color:yellow;font-size:18px">まだ押していない</p>
+<button onclick="test1()" style="padding:16px 32px;font-size:18px;margin:10px;display:block;width:100%">
+  テスト1: ボタン動作確認
+</button>
 
-<input type="password" id="apiKey" placeholder="AIza... （Gemini APIキー）">
-<button onclick="go()">🔍 最新トレンドを取得</button>
-<div id="status"></div>
-<div id="results"></div>
+<h2 style="margin-top:20px">APIテスト</h2>
+<input id="key" type="text" placeholder="APIキーを貼り付け" 
+  style="width:100%;padding:12px;font-size:14px;margin-bottom:10px;display:block;background:#222;color:#fff;border:1px solid #555;border-radius:6px">
+<button onclick="test2()" style="padding:16px 32px;font-size:18px;margin:10px;display:block;width:100%;background:#1f6feb;color:#fff;border:none;border-radius:8px">
+  テスト2: API接続確認
+</button>
+<p id="result" style="color:#7ec8e3;margin-top:10px;word-break:break-all"></p>
 
 <script>
-var codes = {};
+function test1() {
+  document.getElementById('msg').textContent = '✅ ボタンは動いています！';
+  document.getElementById('msg').style.color = '#56d364';
+}
 
-function go() {
-  var key = document.getElementById('apiKey').value.trim();
-  if (!key) { alert('APIキーを入力してください'); return; }
-
-  document.getElementById('status').textContent = '🔍 AIが検索中...';
-  document.getElementById('results').innerHTML = '';
-
-  var prompt = 'AIコーディングの最新トレンドを3件、以下のJSON形式のみで返してください。バッククォートや説明文は不要です。\n{"trends":[{"id":"1","title":"タイトル","summary":"要約（日本語2文）","tags":["タグ1","タグ2"],"sampleCode":"console.log(\'hello\');"}],"fetchedAt":"2026年5月16日"}';
-
+function test2() {
+  var key = document.getElementById('key').value.trim();
+  document.getElementById('result').textContent = '送信中... キー=' + key.slice(0,8) + '...';
+  
   fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({contents:[{parts:[{text:'「テスト成功」とだけ返してください'}]}]})
   })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (data.error) throw new Error(data.error.message);
-    var text = data.candidates[0].content.parts[0].text;
-    text = text.replace(/```json/g,'').replace(/```/g,'').trim();
-    var parsed = JSON.parse(text);
-    codes = {};
-    parsed.trends.forEach(function(t) { codes[t.id] = t.sampleCode; });
-    renderTrends(parsed);
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.error) {
+      document.getElementById('result').textContent = '❌ APIエラー: ' + d.error.message;
+    } else {
+      document.getElementById('result').textContent = '✅ API成功: ' + d.candidates[0].content.parts[0].text;
+    }
   })
-  .catch(function(e) {
-    document.getElementById('status').textContent = '❌ エラー: ' + e.message;
+  .catch(function(e){
+    document.getElementById('result').textContent = '❌ 通信エラー: ' + e.message;
   });
-}
-
-function renderTrends(parsed) {
-  document.getElementById('status').textContent = '✅ ' + parsed.fetchedAt + ' 取得完了';
-  var html = '';
-  parsed.trends.forEach(function(t) {
-    html += '<div class="card">';
-    html += '<h3>' + t.title + '</h3>';
-    html += '<p>' + t.summary + '</p>';
-    html += '<button onclick="toggleCode(\'' + t.id + '\')">▼ コードを試す</button>';
-    html += '<div id="play-' + t.id + '" style="display:none">';
-    html += '<textarea id="src-' + t.id + '"></textarea>';
-
-```
-html += '<button class="run-btn" onclick="runCode(\'' + t.id + '\')">▶ 実行</button> ';
-html += '<button class="reset-btn" onclick="resetCode(\'' + t.id + '\')">リセット</button>';
-html += '<div id="out-' + t.id + '" class="output" style="display:none"></div>';
-html += '</div></div>';
-```
-
-});
-document.getElementById(‘results’).innerHTML = html;
-parsed.trends.forEach(function(t) {
-document.getElementById(‘src-’ + t.id).value = t.sampleCode;
-});
-}
-
-function toggleCode(id) {
-var el = document.getElementById(‘play-’ + id);
-el.style.display = el.style.display === ‘none’ ? ‘block’ : ‘none’;
-}
-
-function runCode(id) {
-var src = document.getElementById(‘src-’ + id).value;
-var logs = [];
-var orig = console.log;
-var origerr = console.error;
-console.log = function() { logs.push({t:‘log’, m: Array.from(arguments).join(’ ‘)}); };
-console.error = function() { logs.push({t:‘err’, m: Array.from(arguments).join(’ ’)}); };
-try { new Function(src)(); } catch(e) { logs.push({t:‘err’, m: e.message}); }
-console.log = orig;
-console.error = origerr;
-var out = document.getElementById(‘out-’ + id);
-out.style.display = ‘block’;
-out.innerHTML = logs.map(function(l) {
-return ‘<div class="' + (l.t==='err'?'err':'log') + '">’ + (l.t===‘err’?’✕ ’:‘→ ‘) + l.m + ‘</div>’;
-}).join(’’);
-if (!logs.length) out.innerHTML = ‘<div class="log">→ 出力なし（エラーなし）</div>’;
-}
-
-function resetCode(id) {
-document.getElementById(‘src-’ + id).value = codes[id];
-document.getElementById(‘out-’ + id).style.display = ‘none’;
 }
 </script>
 
